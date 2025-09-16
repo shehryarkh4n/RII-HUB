@@ -158,6 +158,11 @@ def extract_title_from_result(item: Dict[str, Any]) -> Optional[str]:
         if v: return v
     return None
 
+def extract_abstract_from_result(item: Dict[str, Any]) -> Optional[str]:
+    abstract = item.get("dc:description")
+    if abstract: return abstract
+    return None
+
 def extract_eid_from_result(item: Dict[str, Any]) -> Optional[str]:
     for k in ("eid", "scopus-eid"):
         v = item.get(k)

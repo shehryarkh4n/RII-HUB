@@ -622,7 +622,8 @@ from utils import (
     extract_eid_from_result, extract_doi_from_result,
     extract_affiliations_like, extract_author_keywords_from_search_item,
     render_authors, debug_author_canonicalization,
-    analyze_output_duplicates, comprehensive_author_statistics
+    analyze_output_duplicates, comprehensive_author_statistics,
+    extract_abstract_from_result
 )
 
 def main():
@@ -670,7 +671,7 @@ def main():
     query = build_author_or_query(author_ids, start_year, end_year)
     if args.debug:
         print("Your query builds to:\n", query)
-    
+        
     srch = ElsSearch(query, "scopus")
     try:
         srch.execute(client, get_all=True, view="COMPLETE")
@@ -685,7 +686,6 @@ def main():
     print("Building author canonical names...")
     all_results: List[Dict[str, Any]] = []
     seen_eids: set[str] = set()
-    
     for item in srch.results:
         eid = extract_eid_from_result(item) or ""
         if eid in seen_eids:
@@ -695,6 +695,7 @@ def main():
         authors_raw = extract_authors_from_search_item(item)
 
         title = extract_title_from_result(item) or ""
+        abstract = extract_abstract_from_result(item) or ""
         source_title = item.get("prism:publicationName") or ""
         cited_by = item.get("citedby-count") or item.get("citedbyCount") or ""
         doc_type = item.get("subtypeDescription") or item.get("prism:aggregationType") or ""
@@ -719,6 +720,7 @@ def main():
             "eid": eid,
             "title": title,
             "year": year or "",
+            "abstract": abstract,
             "source_title": source_title,
             "cited_by": cited_by,
             "doc_type": doc_type,
@@ -744,7 +746,7 @@ def main():
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "Authors","Author full names","Author(s) ID","Title","Year","Source title",
+                "Authors","Author full names","Author(s) ID","Title","Year", "Abstract", "Source title",
                 "Cited by","DOI","Affiliations","Author Keywords","Index Keywords","Document Type","Source","EID",
             ],
         )
@@ -758,6 +760,7 @@ def main():
                 "Author(s) ID": c,
                 "Title": result["title"],
                 "Year": result["year"],
+                "Abstract": result["abstract"],
                 "Source title": result["source_title"],
                 "Cited by": result["cited_by"],
                 "DOI": result["doi"],
