@@ -63,12 +63,12 @@ python -m pip install -U pip
 
 3. **Install dependencies**
 
-**Using`pyproject.toml` (modern)**
+**Using `requirements.txt`**
 
 Run the following command to process all packages required:
 
 ```bash
-pip install .
+pip install -r requirements.txt
 ```
 
 4. **Configure environment variables**
@@ -105,8 +105,14 @@ Generates a CSV with bibliographic fields for one or more authors over a date ra
 **Command**
 
 ```bash
-python sites/scopus/author-search/basic_export.py --in <INPUT_CSV> --out <OUTPUT_CSV> [--debug]
+python sites/scopus/author-search/basic-export/basic_export.py --in <INPUT_CSV> --out <OUTPUT_CSV> [--debug]
+
+OR
+
+python sites/scopus/author-search/basic-export/basic_export.py --in <INPUT_CSV> --subfolder <folder name> [--debug]
 ```
+
+Note here that the script will auto-create a folder called `local_outputs`. To create a subfolder for organization, pass in the `--subfolder` clause, followed by a name. To pass a direct path and a name for the output file, use `--out` instead. Examples for both are given below.
 
 ### Input CSV Format
 
@@ -146,17 +152,23 @@ The export produces these columns:
 **Minimal run**
 
 ```bash
-python sites/scopus/author-search/basic_export.py \
+python sites/scopus/author-search/basic-export/basic_export.py \
   --in INPUT_SciVal.csv \
-  --out OUTPUT_SciVal.csv
+  --subfolder scopus
+
+OR
+
+python sites/scopus/author-search/basic-export/basic_export.py \
+  --in INPUT_SciVal.csv \
+  --out path/to/some/folder/fileName.csv
 ```
 
-**With debug logging**
+**An example with debug logging**
 
 ```bash
-python sites/scopus/author-search/basic_export.py \
+python sites/scopus/author-search/basic-export/basic_export.py \
   --in INPUT_SciVal.csv \
-  --out OUTPUT_SciVal.csv \
+  --subfolder scopus \
   --debug
 ```
 

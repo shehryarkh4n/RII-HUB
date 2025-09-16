@@ -1,2 +1,18 @@
+.venv
 .env
+
+# macOS Finder cruft
+.DS_Store
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Files
+local_inputs/
 local_outputs/
+
+# ElsaPy
+logs/
+dump.json
