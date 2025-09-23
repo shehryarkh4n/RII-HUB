@@ -54,7 +54,6 @@ def get_author_canon(auid: str, surname: str, given: str, initials: str) -> Tupl
     if not c: return surname, given, initials
     return (c.get("surname") or surname, c.get("given") or given, c.get("initials") or initials)
 
-
 # -------------------------
 # Small helpers
 # -------------------------
@@ -71,9 +70,17 @@ def parse_author_ids(cell: str) -> List[str]:
         ids.extend([q for q in p.split() if q])
     return [x for x in ids if x.isdigit()]
 
-def build_author_or_query(author_ids: List[str], start_year: int, end_year: int) -> str:
+def build_author_or_query(author_ids: List[str], start_year: int = "", end_year: int = "") -> str:
+    
     ors = " OR ".join([f"AU-ID({aid})" for aid in author_ids])
-    return f"( {ors} ) AND PUBYEAR > {start_year} AND PUBYEAR < {end_year}"
+    if start_year and end_year:
+        return f"( {ors} ) AND PUBYEAR > {start_year} AND PUBYEAR < {end_year}"
+    if start_year:
+        return f"( {ors} ) AND PUBYEAR > {start_year}"
+    if end_year:
+        return f"( {ors} ) AND PUBYEAR < {end_year}"
+    
+    return f"( {ors} )"
 
 def _punctuated_initials(initials_raw: Optional[str]) -> str:
     if not initials_raw: return ""
@@ -156,6 +163,25 @@ def extract_title_from_result(item: Dict[str, Any]) -> Optional[str]:
     for k in ("dc:title", "title", "prism:title"):
         v = item.get(k)
         if v: return v
+    return None
+
+def extract_surname_preferred_name_author_search(item: Dict[str, Any]):
+    naming = item["preferred-name"]
+    return (naming["surname"], naming["given-name"])
+
+def extract_author_id_from_author_search(item):
+    #'dc:identifier': 'AUTHOR_ID:12782207700'
+    identifier = item.get("dc:identifier")
+    try:
+        au_id = identifier.split(":")[-1]
+        return au_id
+    except:
+        return None
+    
+def extract_orcid_id_from_result(item: Dict[str, Any]) -> Optional[str]:
+    if "orcid" in item:
+        orcid_id = item["orcid"].strip("[]")
+        if orcid_id: return orcid_id
     return None
 
 def extract_abstract_from_result(item: Dict[str, Any]) -> Optional[str]:
