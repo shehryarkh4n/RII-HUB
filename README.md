@@ -1,7 +1,6 @@
 # RII-HUB: Research Identity Integration Toolkit
 
 **Associated Paper:** "Connecting Digital Scholarly Researcher Identifiers & University Systems"
-Shehryar Khan — Research Impact & Intelligence, University Libraries, Virginia Tech
 *Presented at ASEE 2026*
 
 This repository provides the computational artifacts for the above paper, plus supporting tools used at Virginia Tech to automate the identification, validation, and disambiguation of Scopus Author IDs for engineering faculty.
