@@ -1,0 +1,30 @@
+.venv
+.env
+
+# macOS Finder cruft
+.DS_Store
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Files
+local_inputs/
+local_outputs/
+
+# ElsaPy
+logs/
+dump.json
+
+# Internal working files / PII — never commit
+attempt*.xlsx
+report*.xlsx
+duplicates_*.csv
+unmatched_*.csv
+*.pkl
+
+# Internal project directories
+SGD/
+REPORT/
+previous_testing/
