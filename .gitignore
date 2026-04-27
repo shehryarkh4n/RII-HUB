@@ -16,3 +16,15 @@ local_outputs/
 # ElsaPy
 logs/
 dump.json
+
+# Internal working files / PII — never commit
+attempt*.xlsx
+report*.xlsx
+duplicates_*.csv
+unmatched_*.csv
+*.pkl
+
+# Internal project directories
+SGD/
+REPORT/
+previous_testing/

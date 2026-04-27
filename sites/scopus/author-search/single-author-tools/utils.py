@@ -111,24 +111,11 @@ def parse_name_column(series):
         results.append((surname, given_name))
     return results
 
-def build_author_or_query(author_ids: List[str] = [], 
-                          start_year: int = "", 
+def build_author_or_query(author_ids: List[str] = [],
+                          start_year: int = "",
                           end_year: int = "",
                           name_tuples: Set[str]= "") -> str:
-    
-    #! Drop in fix, change this to be generic
-    if not author_ids and not start_year and not end_year and name_tuples:
-        clauses = []
-        for surname, given in name_tuples:
-            if surname and given:
-                clauses.append(f"(authlast({surname}) and authfirst({given}))")
-            elif surname:
-                clauses.append(f"(authlast({surname}))")
 
-        names_stitched = "(" + " OR ".join(clauses) + ") AND (AFFIL(Virginia Tech) OR AFFIL(Virginia Polytechnic))"
-        return names_stitched
-
-            
     ors = " OR ".join([f"AU-ID({aid})" for aid in author_ids])
     if start_year and end_year:
         return f"( {ors} ) AND PUBYEAR > {start_year} AND PUBYEAR < {end_year}"
@@ -194,6 +181,11 @@ def extract_affiliations_like(data: Dict[str, Any], delim: str) -> str:
         if parts: affs.append(", ".join(parts))
     return delim.join(affs)
 
+def extract_affiliation_name(item):
+    affil_curr = item.get("affiliation-current")
+    affil_name = affil_curr.get("affiliation-name")
+    return affil_name if affil_name else None
+    
 def extract_author_keywords_from_search_item(item: Dict[str, Any], delim: str) -> str:
     ak = item.get("authkeywords")
     if not ak: return ""
@@ -223,8 +215,9 @@ def extract_title_from_result(item: Dict[str, Any]) -> Optional[str]:
     return None
 
 def extract_surname_preferred_name_author_search(item: Dict[str, Any]):
-    naming = item["preferred-name"]
-    return (naming["surname"], naming["given-name"])
+    naming = item.get("preferred-name")
+    if naming: return (naming["surname"], naming["given-name"])
+    return None
 
 def extract_author_id_from_author_search(item):
     #'dc:identifier': 'AUTHOR_ID:12782207700'
