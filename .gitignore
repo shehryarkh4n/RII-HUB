@@ -12,6 +12,7 @@ __pycache__/
 # Files
 local_inputs/
 local_outputs/
+local/
 
 # ElsaPy
 logs/
